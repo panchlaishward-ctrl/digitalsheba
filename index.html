@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digital Tools BD</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  background:#f5f7fb;
+  color:#172033;
+}
+
+header{
+  background:#111827;
+  color:#fff;
+  padding:14px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:10px 15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.primary{
+  background:#2563eb;
+  color:#fff;
+}
+
+.success{
+  background:#16a34a;
+  color:#fff;
+}
+
+.danger{
+  background:#dc2626;
+  color:#fff;
+}
+
+.light{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.hero{
+  padding:55px 5%;
+  text-align:center;
+  background:linear-gradient(135deg,#dbeafe,#eef2ff);
+}
+
+.hero h1{
+  font-size:35px;
+  margin:0 0 10px;
+}
+
+.hero p{
+  color:#475569;
+}
+
+.search{
+  width:min(650px,95%);
+  padding:14px;
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  font-size:16px;
+}
+
+.container{
+  width:min(1100px,92%);
+  margin:auto;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:25px 0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:
+  repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin:20px 0 35px;
+}
+
+.card,
+.box,
+.panel{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 5px 20px #00000008;
+}
+
+.card h3{
+  margin-top:8px;
+}
+
+.premium{
+  border:2px solid #f59e0b;
+}
+
+.tag{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#fef3c7;
+  color:#92400e;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.muted{
+  color:#64748b;
+  font-size:14px;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:50;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modalbox{
+  background:white;
+  width:min(520px,100%);
+  max-height:92vh;
+  overflow:auto;
+  border-radius:18px;
+  padding:24px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  margin:6px 0 12px;
+  font-size:15px;
+}
+
+label{
+  font-weight:700;
+  font-size:14px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.notice{
+  padding:12px;
+  border-radius:10px;
+  background:#eff6ff;
+  margin:10px 0;
+}
+
+.hide{
+  display:none!important;
+}
+
+.stat{
+  font-size:28px;
+  font-weight:800;
+}
+
+footer{
+  text-align:center;
+  padding:40px;
+  color:#64748b;
+}
+
+@media(max-width:600px){
+
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  .hero h1{
+    font-size:28px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+🛠️ Digital Tools BD
+</div>
+
+<div>
+
+<button
+id="loginBtn"
+class="light"
+onclick="openLogin()">
+Login
+</button>
+
+<button
+id="dashboardBtn"
+class="primary hide"
+onclick="openDashboard()">
+Dashboard
+</button>
+
+</div>
+
+</header>
+
+
+<section class="hero">
+
+<div class="container">
+
+<h1>
+সব ডিজিটাল কাজ এক জায়গায়
+</h1>
+
+<p>
+Image, PDF, CV এবং প্রয়োজনীয় Digital Tools ব্যবহার করুন।
+</p>
+
+<input
+id="search"
+class="search"
+placeholder="Tool খুঁজুন..."
+oninput="filterTools()">
+
+</div>
+
+</section>
+
+
+<main class="container">
+
+
+<div class="topbar">
+
+<div>
+
+<b id="welcome">
+Guest User
+</b>
+
+<div
+id="plan"
+class="muted">
+Free Plan
+</div>
+
+</div>
+
+<button
+class="primary"
+onclick="openPayment()">
+
+⭐ Premium নিন
+
+</button>
+
+</div>
+
+
+<div
+id="connectionStatus"
+class="notice">
+
+🔄 Server connection checking...
+
+</div>
+
+
+<div
+id="tools"
+class="grid">
+
+
+<!-- IMAGE RESIZE -->
+
+<div
+class="card tool"
+data-name="image resize compress">
+
+<h3>
+🖼️ Image Resize
+</h3>
+
+<p class="muted">
+ছবির Width ও Height পরিবর্তন করুন।
+</p>
+
+<button
+class="primary"
+onclick="openTool('resize')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- PASSPORT -->
+
+<div
+class="card tool"
+data-name="passport photo">
+
+<h3>
+📷 Passport Photo
+</h3>
+
+<p class="muted">
+Passport size ছবি তৈরি করুন।
+</p>
+
+<button
+class="primary"
+onclick="openTool('passport')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- BACKGROUND REMOVE -->
+
+<div
+class="card tool premium"
+data-name="background remove ai">
+
+<span class="tag">
+PREMIUM
+</span>
+
+<h3>
+✨ AI Background Remove
+</h3>
+
+<p class="muted">
+ছবির Background Remove করুন।
+</p>
+
+<button
+class="primary"
+onclick="usePremiumTool('bg')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- IMAGE PDF -->
+
+<div
+class="card tool"
+data-name="image pdf">
+
+<h3>
+📄 Image → PDF
+</h3>
+
+<p class="muted">
+এক বা একাধিক ছবি PDF করুন।
+</p>
+
+<button
+class="primary"
+onclick="openTool('imgpdf')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- PDF WORD -->
+
+<div
+class="card tool premium"
+data-name="pdf word">
+
+<span class="tag">
+PREMIUM
+</span>
+
+<h3>
+📕 PDF → Word
+</h3>
+
+<p class="muted">
+Text PDF থেকে Word তৈরি করুন।
+</p>
+
+<button
+class="primary"
+onclick="usePremiumTool('pdfword')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- WORD PDF -->
+
+<div
+class="card tool"
+data-name="word pdf">
+
+<h3>
+📘 Word → PDF
+</h3>
+
+<p class="muted">
+Word document থেকে PDF তৈরি করুন।
+</p>
+
+<button
+class="primary"
+onclick="openTool('wordpdf')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- PDF MERGE -->
+
+<div
+class="card tool premium"
+data-name="pdf merge">
+
+<span class="tag">
+PREMIUM
+</span>
+
+<h3>
+🔗 PDF Merge
+</h3>
+
+<p class="muted">
+একাধিক PDF একত্র করুন।
+</p>
+
+<button
+class="primary"
+onclick="usePremiumTool('merge')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+<!-- CV -->
+
+<div
+class="card tool"
+data-name="cv maker">
+
+<h3>
+📝 CV Maker
+</h3>
+
+<p class="muted">
+সহজে Professional CV তৈরি করুন।
+</p>
+
+<button
+class="primary"
+onclick="openTool('cv')">
+
+ব্যবহার করুন
+
+</button>
+
+</div>
+
+
+</div>
+
+
+<!-- PREMIUM -->
+
+<section class="panel">
+
+<h2>
+⭐ Premium Plan
+</h2>
+
+<p>
+Premium হলে Premium Tools ব্যবহার করতে পারবেন।
+</p>
+
+
+<div class="grid">
+
+
+<div class="box">
+
+<b>
+৭ দিন
+</b>
+
+<h2>
+৳৫০
+</h2>
+
+</div>
+
+
+<div class="box">
+
+<b>
+৩০ দিন
+</b>
+
+<h2>
+৳১৫০
+</h2>
+
+</div>
+
+
+<div class="box">
+
+<b>
+৯০ দিন
+</b>
+
+<h2>
+৳৩৫০
+</h2>
+
+</div>
+
+
+</div>
+
+
+<button
+class="primary"
+onclick="openPayment()">
+
+💳 Premium Payment
+
+</button>
+
+</section>
+
+
+</main>
+
+
+<!-- MODAL -->
+
+<div
+id="modal"
+class="modal">
+
+<div
+id="modalContent"
+class="modalbox">
+</div>
+
+</div>
+
+
+<footer>
+
+© 2026 Digital Tools BD
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   GOOGLE APPS SCRIPT API
+===================================================== */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwcKhjnH7yOk0cPVr4B2bfvufT5FYkJ0zREWiyYXPP-OFOmjxpnRSlXTdUVZBTdzDt4/exec";
+
+
+/* =====================================================
+   USER
+===================================================== */
+
+let user =
+JSON.parse(
+localStorage.getItem("digital_tools_user")
+|| "null"
+);
+
+
+/* =====================================================
+   API FUNCTION
+===================================================== */
+
+async function api(action,data={}){
+
+try{
+
+const response =
+await fetch(API_URL,{
+method:"POST",
+headers:{
+"Content-Type":
+"text/plain;charset=utf-8"
+},
+body:JSON.stringify({
+action:action,
+...data
+})
+});
+
+const text =
+await response.text();
+
+try{
+
+return JSON.parse(text);
+
+}catch(e){
+
+return{
+ok:false,
+message:
+"Server থেকে সঠিক response পাওয়া যায়নি।"
+};
+
+}
+
+}catch(error){
+
+return{
+ok:false,
+message:
+"Server connection failed: "
++ error.message
+};
+
+}
+
+}
+
+
+/* =====================================================
+   SERVER CHECK
+===================================================== */
+
+async function checkConnection(){
+
+const box =
+document.getElementById(
+"connectionStatus"
+);
+
+try{
+
+const response =
+await fetch(API_URL);
+
+const data =
+await response.json();
+
+if(data.ok){
+
+box.innerHTML =
+"🟢 Server Connected";
+
+box.style.background =
+"#dcfce7";
+
+}else{
+
+box.innerHTML =
+"🟡 Server response পাওয়া গেছে";
+
+}
+
+}catch(error){
+
+box.innerHTML =
+"🔴 Server connection হচ্ছে না।";
+
+box.style.background =
+"#fee2e2";
+
+}
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function showModal(html){
+
+document
+.getElementById("modalContent")
+.innerHTML=html;
+
+document
+.getElementById("modal")
+.classList.add("show");
+
+}
+
+
+function closeModal(){
+
+document
+.getElementById("modal")
+.classList.remove("show");
+
+}
+
+
+/* =====================================================
+   RENDER USER
+===================================================== */
+
+function renderUser(){
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+const dashboardBtn =
+document.getElementById("dashboardBtn");
+
+const welcome =
+document.getElementById("welcome");
+
+const plan =
+document.getElementById("plan");
+
+
+if(user){
+
+loginBtn.classList.add("hide");
+
+dashboardBtn.classList.remove("hide");
+
+welcome.textContent =
+"স্বাগতম, "
++ user.name;
+
+plan.textContent =
+user.premium
+? "⭐ Premium Plan"
+: "Free Plan";
+
+}else{
+
+loginBtn.classList.remove("hide");
+
+dashboardBtn.classList.add("hide");
+
+welcome.textContent =
+"Guest User";
+
+plan.textContent =
+"Free Plan";
+
+}
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function openLogin(){
+
+showModal(`
+
+<h2>
+🔐 Login / Registration
+</h2>
+
+<label>
+নাম
+</label>
+
+<input
+id="loginName"
+placeholder="আপনার নাম">
+
+
+<label>
+মোবাইল
+</label>
+
+<input
+id="loginPhone"
+placeholder="01XXXXXXXXX">
+
+
+<label>
+Email
+</label>
+
+<input
+id="loginEmail"
+type="email"
+placeholder="example@gmail.com">
+
+
+<label>
+Password
+</label>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Password">
+
+
+<button
+class="primary"
+onclick="loginOrRegister()">
+
+Login / Create Account
+
+</button>
+
+
+<button
+class="light"
+onclick="closeModal()">
+
+বন্ধ
+
+</button>
+
+
+<p class="muted">
+
+নতুন Email হলে Account তৈরি হবে।
+পুরনো Email হলে Login করার চেষ্টা করবে।
+
+</p>
+
+`);
+
+}
+
+
+/* =====================================================
+   LOGIN / REGISTER
+===================================================== */
+
+async function loginOrRegister(){
+
+const name =
+document
+.getElementById("loginName")
+.value.trim();
+
+const phone =
+document
+.getElementById("loginPhone")
+.value.trim();
+
+const email =
+document
+.getElementById("loginEmail")
+.value.trim();
+
+const password =
+document
+.getElementById("loginPassword")
+.value;
+
+
+if(
+!name ||
+!phone ||
+!email ||
+!password
+){
+
+alert(
+"সব তথ্য পূরণ করুন।"
+);
+
+return;
+
+}
+
+
+/* LOGIN */
+
+const login =
+await api(
+"login",
+{
+name:name,
+phone:phone,
+email:email,
+password:password
+}
+);
+
+
+if(login.ok){
+
+user =
+login.user;
+
+localStorage.setItem(
+"digital_tools_user",
+JSON.stringify(user)
+);
+
+renderUser();
+
+closeModal();
+
+alert(
+"Login successful!"
+);
+
+return;
+
+}
+
+
+/* REGISTER */
+
+const registration =
+await api(
+"register",
+{
+name:name,
+phone:phone,
+email:email,
+password:password
+}
+);
+
+
+if(registration.ok){
+
+user =
+registration.user;
+
+localStorage.setItem(
+"digital_tools_user",
+JSON.stringify(user)
+);
+
+renderUser();
+
+closeModal();
+
+alert(
+"Account সফলভাবে তৈরি হয়েছে।"
+);
+
+}else{
+
+alert(
+registration.message
+||
+login.message
+||
+"Login/Register failed"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   REFRESH USER
+===================================================== */
+
+async function refreshUser(){
+
+if(
+!user ||
+!user.email
+)return;
+
+
+const result =
+await api(
+"getUser",
+{
+email:user.email
+}
+);
+
+
+if(result.ok){
+
+user =
+result.user;
+
+localStorage.setItem(
+"digital_tools_user",
+JSON.stringify(user)
+);
+
+renderUser();
+
+}
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function openDashboard(){
+
+if(!user){
+
+openLogin();
+
+return;
+
+}
+
+
+showModal(`
+
+<h2>
+👤 User Dashboard
+</h2>
+
+
+<div class="box">
+
+<div class="stat">
+
+${escapeHTML(user.name)}
+
+</div>
+
+
+<p>
+
+<b>Email:</b>
+
+${escapeHTML(user.email)}
+
+</p>
+
+
+<p>
+
+<b>Mobile:</b>
+
+${escapeHTML(user.phone)}
+
+</p>
+
+
+<p>
+
+<b>Plan:</b>
+
+${user.premium
+? "⭐ Premium"
+: "Free"}
+
+</p>
+
+
+${
+user.premium
+
+?
+
+`<p>
+<b>Premium End:</b>
+${formatDate(user.premiumEnd)}
+</p>`
+
+:
+
+`<div class="notice">
+
+আপনি Free User।
+Premium Tool ব্যবহার করতে Premium নিন।
+
+</div>`
+
+}
+
+</div>
+
+
+<br>
+
+
+<button
+class="primary"
+onclick="openPayment()">
+
+💳 Premium Payment
+
+</button>
+
+
+<button
+class="danger"
+onclick="logout()">
+
+Logout
+
+</button>
+
+
+<button
+class="light"
+onclick="closeModal()">
+
+বন্ধ
+
+</button>
+
+`);
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+user=null;
+
+localStorage.removeItem(
+"digital_tools_user"
+);
+
+renderUser();
+
+closeModal();
+
+}
+
+
+/* =====================================================
+   PAYMENT
+===================================================== */
+
+function openPayment(){
+
+if(!user){
+
+openLogin();
+
+return;
+
+}
+
+
+showModal(`
+
+<h2>
+💳 Premium Payment
+</h2>
+
+
+<div class="notice">
+
+<b>bKash:</b>
+আপনার bKash নম্বরে টাকা পাঠান।
+
+<br>
+
+<b>Nagad:</b>
+আপনার Nagad নম্বরে টাকা পাঠান।
+
+</div>
+
+
+<label>
+Payment Method
+</label>
+
+<select id="paymentMethod">
+
+<option value="bKash">
+bKash
+</option>
+
+<option value="Nagad">
+Nagad
+</option>
+
+</select>
+
+
+<label>
+Premium Plan
+</label>
+
+<select id="paymentPlan">
+
+<option value="7">
+৭ দিন — ৳৫০
+</option>
+
+<option value="30">
+৩০ দিন — ৳১৫০
+</option>
+
+<option value="90">
+৯০ দিন — ৳৩৫০
+</option>
+
+</select>
+
+
+<label>
+Transaction ID
+</label>
+
+<input
+id="transactionId"
+placeholder="Transaction ID">
+
+
+<label>
+যে নম্বর থেকে টাকা পাঠিয়েছেন
+</label>
+
+<input
+id="senderNumber"
+placeholder="01XXXXXXXXX">
+
+
+<button
+class="primary"
+onclick="submitPayment()">
+
+Payment Submit
+
+</button>
+
+
+<button
+class="light"
+onclick="closeModal()">
+
+বন্ধ
+
+</button>
+
+`);
+
+}
+
+
+/* =====================================================
+   SUBMIT PAYMENT
+===================================================== */
+
+async function submitPayment(){
+
+const method =
+document
+.getElementById("paymentMethod")
+.value;
+
+const plan =
+document
+.getElementById("paymentPlan")
+.value;
+
+const trx =
+document
+.getElementById("transactionId")
+.value.trim();
+
+const sender =
+document
+.getElementById("senderNumber")
+.value.trim();
+
+
+if(
+!trx ||
+!sender
+){
+
+alert(
+"Transaction ID এবং Sender Number দিন।"
+);
+
+return;
+
+}
+
+
+const result =
+await api(
+"payment",
+{
+
+email:user.email,
+
+name:user.name,
+
+phone:user.phone,
+
+method:method,
+
+plan:plan,
+
+trx:trx,
+
+sender:sender
+
+}
+);
+
+
+if(result.ok){
+
+closeModal();
+
+alert(
+"Payment Request সফলভাবে জমা হয়েছে।\n\n"
++
+"Payment ID: "
++
+result.paymentID
++
+"\n\nAdmin যাচাই করার পর Premium চালু হবে।"
+);
+
+}else{
+
+alert(
+result.message
+||
+"Payment submit failed"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   PREMIUM CHECK
+===================================================== */
+
+function usePremiumTool(type){
+
+if(!user){
+
+openLogin();
+
+return;
+
+}
+
+
+if(!user.premium){
+
+openPayment();
+
+return;
+
+}
+
+
+openTool(type);
+
+}
+
+
+/* =====================================================
+   TOOLS
+===================================================== */
+
+function openTool(type){
+
+let html="";
+
+
+/* RESIZE */
+
+if(type==="resize"){
+
+html=`
+
+<h2>
+🖼️ Image Resize
+</h2>
+
+<input
+id="resizeFile"
+type="file"
+accept="image/*">
+
+
+<div class="row">
+
+<div>
+
+<label>
+Width
+</label>
+
+<input
+id="resizeWidth"
+type="number">
+
+</div>
+
+
+<div>
+
+<label>
+Height
+</label>
+
+<input
+id="resizeHeight"
+type="number">
+
+</div>
+
+</div>
+
+
+<button
+class="primary"
+onclick="resizeImage()">
+
+Download
+
+</button>
+
+`;
+
+}
+
+
+/* PASSPORT */
+
+else if(type==="passport"){
+
+html=`
+
+<h2>
+📷 Passport Photo
+</h2>
+
+<input
+id="passportFile"
+type="file"
+accept="image/*">
+
+
+<p class="muted">
+
+35×45mm equivalent passport photo তৈরি হবে।
+
+</p>
+
+
+<button
+class="primary"
+onclick="makePassport()">
+
+তৈরি করুন
+
+</button>
+
+`;
+
+}
+
+
+/* IMAGE PDF */
+
+else if(type==="imgpdf"){
+
+html=`
+
+<h2>
+📄 Image → PDF
+</h2>
+
+<input
+id="pdfImages"
+type="file"
+multiple
+accept="image/*">
+
+
+<button
+class="primary"
+onclick="imagesToPDF()">
+
+PDF Download
+
+</button>
+
+`;
+
+}
+
+
+/* WORD PDF */
+
+else if(type==="wordpdf"){
+
+html=`
+
+<h2>
+📘 Word → PDF
+</h2>
+
+<input
+id="wordFile"
+type="file"
+accept=".doc,.docx">
+
+
+<button
+class="primary"
+onclick="wordToPDF()">
+
+Convert
+
+</button>
+
+`;
+
+}
+
+
+/* PDF WORD */
+
+else if(type==="pdfword"){
+
+html=`
+
+<h2>
+📕 PDF → Word
+</h2>
+
+<input
+id="pdfFile"
+type="file"
+accept=".pdf">
+
+
+<p class="muted">
+
+Text-based PDF-এর জন্য।
+Scanned PDF-এর জন্য OCR প্রয়োজন।
+
+</p>
+
+
+<button
+class="primary"
+onclick="pdfToWordInfo()">
+
+Convert
+
+</button>
+
+`;
+
+}
+
+
+/* MERGE */
+
+else if(type==="merge"){
+
+html=`
+
+<h2>
+🔗 PDF Merge
+</h2>
+
+<input
+id="mergeFiles"
+type="file"
+multiple
+accept=".pdf">
+
+
+<button
+class="primary"
+onclick="mergePDFInfo()">
+
+Merge PDF
+
+</button>
+
+`;
+
+}
+
+
+/* BACKGROUND */
+
+else if(type==="bg"){
+
+html=`
+
+<h2>
+✨ AI Background Remove
+</h2>
+
+<input
+id="bgFile"
+type="file"
+accept="image/*">
+
+
+<p>
+
+Premium AI Background Removal Tool।
+
+</p>
+
+
+<button
+class="primary"
+onclick="backgroundRemoveInfo()">
+
+Remove Background
+
+</button>
+
+`;
+
+}
+
+
+/* CV */
+
+else if(type==="cv"){
+
+html=`
+
+<h2>
+📝 CV Maker
+</h2>
+
+
+<label>
+নাম
+</label>
+
+<input
+id="cvName"
+placeholder="আপনার নাম">
+
+
+<label>
+মোবাইল
+</label>
+
+<input
+id="cvPhone"
+placeholder="01XXXXXXXXX">
+
+
+<label>
+Email
+</label>
+
+<input
+id="cvEmail"
+placeholder="example@gmail.com">
+
+
+<label>
+ঠিকানা
+</label>
+
+<input
+id="cvAddress">
+
+
+<label>
+Career Objective
+</label>
+
+<textarea
+id="cvObjective">
+</textarea>
+
+
+<button
+class="primary"
+onclick="makeCV()">
+
+CV তৈরি করুন
+
+</button>
+
+`;
+
+}
+
+
+html += `
+
+<br><br>
+
+<button
+class="light"
+onclick="closeModal()">
+
+বন্ধ
+
+</button>
+
+`;
+
+
+showModal(html);
+
+}
+
+
+/* =====================================================
+   IMAGE RESIZE
+===================================================== */
+
+function resizeImage(){
+
+const file =
+document
+.getElementById("resizeFile")
+.files[0];
+
+
+if(!file){
+
+alert("ছবি নির্বাচন করুন।");
+
+return;
+
+}
+
+
+const width =
+Number(
+document
+.getElementById("resizeWidth")
+.value
+);
+
+
+const height =
+Number(
+document
+.getElementById("resizeHeight")
+.value
+);
+
+
+const reader =
+new FileReader();
+
+
+reader.onload=function(e){
+
+const img =
+new Image();
+
+
+img.onload=function(){
+
+const canvas =
+document.createElement(
+"canvas"
+);
+
+
+canvas.width =
+width || img.width;
+
+canvas.height =
+height || img.height;
+
+
+canvas
+.getContext("2d")
+.drawImage(
+img,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+downloadData(
+canvas.toDataURL(
+"image/jpeg",
+.9
+),
+"resized-image.jpg"
+);
+
+};
+
+
+img.src=e.target.result;
+
+};
+
+
+reader.readAsDataURL(file);
+
+}
+
+
+/* =====================================================
+   PASSPORT
+===================================================== */
+
+function makePassport(){
+
+const file =
+document
+.getElementById("passportFile")
+.files[0];
+
+
+if(!file){
+
+alert(
+"ছবি নির্বাচন করুন।"
+);
+
+return;
+
+}
+
+
+const reader =
+new FileReader();
+
+
+reader.onload=function(e){
+
+const img =
+new Image();
+
+
+img.onload=function(){
+
+const canvas =
+document.createElement(
+"canvas"
+);
+
+
+canvas.width=413;
+canvas.height=531;
+
+
+const ctx =
+canvas.getContext("2d");
+
+
+ctx.drawImage(
+img,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+downloadData(
+canvas.toDataURL(
+"image/jpeg",
+.95
+),
+"passport-photo.jpg"
+);
+
+};
+
+
+img.src=e.target.result;
+
+};
+
+
+reader.readAsDataURL(file);
+
+}
+
+
+/* =====================================================
+   IMAGE PDF
+===================================================== */
+
+function imagesToPDF(){
+
+const files =
+document
+.getElementById("pdfImages")
+.files;
+
+
+if(!files.length){
+
+alert(
+"ছবি নির্বাচন করুন।"
+);
+
+return;
+
+}
+
+
+alert(
+"Image → PDF Tool-এর PDF engine যুক্ত করতে jsPDF/pdf-lib CDN যোগ করতে হবে।"
+);
+
+}
+
+
+/* =====================================================
+   OTHER TOOLS
+===================================================== */
+
+function wordToPDF(){
+
+alert(
+"Word → PDF-এর সম্পূর্ণ layout-preserving conversion-এর জন্য document conversion engine প্রয়োজন।"
+);
+
+}
+
+
+function pdfToWordInfo(){
+
+alert(
+"PDF → Word-এর জন্য text extraction/OCR engine প্রয়োজন।"
+);
+
+}
+
+
+function mergePDFInfo(){
+
+alert(
+"PDF Merge-এর জন্য pdf-lib engine যুক্ত করতে হবে।"
+);
+
+}
+
+
+function backgroundRemoveInfo(){
+
+alert(
+"AI Background Remove-এর জন্য AI model library যুক্ত করতে হবে।"
+);
+
+}
+
+
+/* =====================================================
+   CV
+===================================================== */
+
+function makeCV(){
+
+const name =
+document
+.getElementById("cvName")
+.value;
+
+const phone =
+document
+.getElementById("cvPhone")
+.value;
+
+const email =
+document
+.getElementById("cvEmail")
+.value;
+
+const address =
+document
+.getElementById("cvAddress")
+.value;
+
+const objective =
+document
+.getElementById("cvObjective")
+.value;
+
+
+const w =
+window.open("");
+
+
+w.document.write(`
+
+<!doctype html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8">
+
+<title>
+CV
+</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:40px;
+line-height:1.7;
+}
+
+h1{
+margin-bottom:4px;
+}
+
+hr{
+border:0;
+border-top:1px solid #ccc;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+${escapeHTML(name)}
+</h1>
+
+
+<p>
+${escapeHTML(phone)}
+|
+${escapeHTML(email)}
+</p>
+
+
+<p>
+${escapeHTML(address)}
+</p>
+
+
+<hr>
+
+
+<h2>
+Career Objective
+</h2>
+
+
+<p>
+${escapeHTML(objective)}
+</p>
+
+
+</body>
+
+</html>
+
+`);
+
+
+w.document.close();
+
+w.print();
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function filterTools(){
+
+const q =
+document
+.getElementById("search")
+.value
+.toLowerCase();
+
+
+document
+.querySelectorAll(".tool")
+.forEach(card=>{
+
+const name =
+card.dataset.name
+.toLowerCase();
+
+
+card.style.display =
+name.includes(q)
+? "block"
+: "none";
+
+});
+
+}
+
+
+/* =====================================================
+   DOWNLOAD
+===================================================== */
+
+function downloadData(
+data,
+filename
+){
+
+const a =
+document.createElement("a");
+
+a.href=data;
+
+a.download=filename;
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+}
+
+
+/* =====================================================
+   SECURITY / HTML ESCAPE
+===================================================== */
+
+function escapeHTML(value){
+
+return String(value || "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value){
+
+if(!value)return "";
+
+const d =
+new Date(value);
+
+if(isNaN(d))
+return value;
+
+return d.toLocaleDateString(
+"bn-BD"
+);
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+renderUser();
+
+checkConnection();
+
+
+if(user){
+
+refreshUser();
+
+}
+
+</script>
+
+</body>
+</html>
