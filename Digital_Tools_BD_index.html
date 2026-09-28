@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Digital Tools BD</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f4f7fb;color:#172033}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.header{position:sticky;top:0;z-index:20;background:#101827;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-size:20px;font-weight:800}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700}
+.primary{background:#2563eb;color:white}.success{background:#16a34a;color:white}.danger{background:#dc2626;color:white}.dark{background:#111827;color:white}.light{background:white;color:#111827}
+.container{max-width:1150px;margin:auto;padding:24px 16px}
+.hero{background:linear-gradient(135deg,#111827,#2563eb);color:white;border-radius:20px;padding:34px;margin-bottom:22px}
+.hero h1{margin:0 0 10px;font-size:34px}
+.hero p{opacity:.9}
+.search{width:100%;padding:14px;border:0;border-radius:12px;margin-top:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 6px 22px #0000000d}
+.card h3{margin:8px 0}.icon{font-size:34px}
+.card p{color:#64748b;min-height:42px}
+.badge{display:inline-block;background:#fef3c7;color:#92400e;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:700}
+.section-title{margin:28px 0 14px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:100;padding:15px}
+.modal.show{display:flex}
+.modalbox{background:white;border-radius:18px;width:min(720px,100%);max-height:92vh;overflow:auto;padding:22px}
+.modalhead{display:flex;justify-content:space-between;align-items:center}
+.close{border:0;background:#eee;border-radius:50%;width:35px;height:35px}
+.field{margin:10px 0}.field label{display:block;font-weight:700;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #d7dee9;border-radius:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:650px){.row{grid-template-columns:1fr}.hero h1{font-size:26px}.header{align-items:flex-start;flex-direction:column}}
+.hide{display:none!important}
+.notice{padding:12px;border-radius:10px;background:#eff6ff;margin:10px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat{background:#fff;border-radius:14px;padding:18px}.stat b{font-size:28px;display:block}
+.tablewrap{overflow:auto;margin-top:12px}.table{width:100%;border-collapse:collapse;min-width:750px}.table th,.table td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left}.table th{background:#f8fafc}
+footer{text-align:center;padding:30px;color:#64748b}
+.tool-actions{display:flex;gap:8px;flex-wrap:wrap}
+.small{font-size:12px;color:#64748b}
+#toast{position:fixed;right:15px;bottom:15px;z-index:200;display:none;background:#111827;color:#fff;padding:13px 17px;border-radius:10px}
+</style>
+</head>
+
+<body>
+<header class="header">
+  <div class="logo">🛠️ Digital Tools BD</div>
+  <div class="nav">
+    <button class="btn light" onclick="openAuth()">🔐 Login</button>
+    <button class="btn light" onclick="openUserDashboard()">👤 Dashboard</button>
+    <button class="btn light" onclick="openAdmin()">🔧 Admin</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>সব ডিজিটাল টুল এক জায়গায়</h1>
+    <p>Image, PDF, CV এবং অন্যান্য প্রয়োজনীয় অনলাইন টুল ব্যবহার করুন।</p>
+    <input id="search" class="search" placeholder="🔎 Tool খুঁজুন..." oninput="filterTools()">
+  </section>
+
+  <h2 class="section-title">🧰 Digital Tools</h2>
+  <section id="tools" class="grid">
+
+    <div class="card tool" data-name="background remove bg remover">
+      <div class="icon">🪄</div><h3>Background Remove</h3>
+      <p>ছবির background AI দিয়ে remove করুন।</p>
+      <button class="btn primary" onclick="backgroundRemove()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="image resize resize photo">
+      <div class="icon">📐</div><h3>Image Resize</h3>
+      <p>ছবির width/height পরিবর্তন করুন।</p>
+      <button class="btn primary" onclick="openResize()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="passport photo passport">
+      <div class="icon">🪪</div><h3>Passport Photo</h3>
+      <p>Passport size photo তৈরি করুন।</p>
+      <button class="btn primary" onclick="openPassport()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="image pdf jpg pdf">
+      <div class="icon">🖼️</div><h3>Image → PDF</h3>
+      <p>এক বা একাধিক ছবি PDF করুন।</p>
+      <button class="btn primary" onclick="imageToPdf()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="pdf word pdf to word">
+      <div class="icon">📄</div><h3>PDF → Word</h3>
+      <p>Text-based PDF থেকে Word তৈরি করুন।</p>
+      <button class="btn primary" onclick="pdfToWord()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="word pdf word to pdf">
+      <div class="icon">📝</div><h3>Word → PDF</h3>
+      <p>DOCX-এর text PDF হিসেবে তৈরি করুন।</p>
+      <button class="btn primary" onclick="wordToPdf()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="merge pdf pdf merge">
+      <div class="icon">🔗</div><h3>PDF Merge</h3>
+      <p>একাধিক PDF একসাথে করুন।</p>
+      <button class="btn primary" onclick="pdfMerge()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="split pdf pdf split">
+      <div class="icon">✂️</div><h3>PDF Split</h3>
+      <p>PDF-এর নির্দিষ্ট page আলাদা করুন।</p>
+      <button class="btn primary" onclick="pdfSplit()">Open Tool</button>
+    </div>
+
+    <div class="card tool" data-name="cv resume cv maker">
+      <div class="icon">📋</div><h3>CV Maker</h3>
+      <p>সহজে নিজের CV তৈরি ও print করুন।</p>
+      <button class="btn primary" onclick="openCV()">Open Tool</button>
+    </div>
+  </section>
+
+  <h2 class="section-title">⭐ Premium Plans</h2>
+  <section class="grid">
+    <div class="card"><span class="badge">7 DAYS</span><h3>৳50</h3><p>7 দিনের Premium Access</p><button class="btn success" onclick="openPayment('7')">Buy Now</button></div>
+    <div class="card"><span class="badge">30 DAYS</span><h3>৳150</h3><p>30 দিনের Premium Access</p><button class="btn success" onclick="openPayment('30')">Buy Now</button></div>
+    <div class="card"><span class="badge">90 DAYS</span><h3>৳350</h3><p>90 দিনের Premium Access</p><button class="btn success" onclick="openPayment('90')">Buy Now</button></div>
+  </section>
+</main>
+
+<footer>© Digital Tools BD — Online Digital Tools Platform</footer>
+<div id="toast"></div>
+
+<!-- AUTH -->
+<div class="modal" id="authModal">
+<div class="modalbox">
+<div class="modalhead"><h2>🔐 Account</h2><button class="close" onclick="closeModal('authModal')">×</button></div>
+<div class="row">
+  <div>
+    <h3>Login</h3>
+    <div class="field"><label>Email</label><input id="loginEmail" type="email"></div>
+    <div class="field"><label>Password</label><input id="loginPassword" type="password"></div>
+    <button class="btn primary" onclick="login()">Login</button>
+  </div>
+  <div>
+    <h3>Registration</h3>
+    <div class="field"><label>Name</label><input id="regName"></div>
+    <div class="field"><label>Phone</label><input id="regPhone"></div>
+    <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
+    <div class="field"><label>Password</label><input id="regPassword" type="password" placeholder="কমপক্ষে ৮ অক্ষর"></div>
+    <button class="btn success" onclick="register()">Create Account</button>
+  </div>
+</div>
+</div></div>
+
+<!-- USER DASHBOARD -->
+<div class="modal" id="userModal">
+<div class="modalbox">
+<div class="modalhead"><h2>👤 User Dashboard</h2><button class="close" onclick="closeModal('userModal')">×</button></div>
+<div id="userInfo" class="notice">Login করুন।</div>
+<button class="btn success" onclick="openPayment()">💳 Premium কিনুন</button>
+<button class="btn danger" onclick="logout()">Logout</button>
+</div></div>
+
+<!-- PAYMENT -->
+<div class="modal" id="paymentModal">
+<div class="modalbox">
+<div class="modalhead"><h2>💳 Premium Payment</h2><button class="close" onclick="closeModal('paymentModal')">×</button></div>
+<div id="paymentNumbers" class="notice">Payment number loading...</div>
+<div class="field"><label>Plan</label><select id="payPlan"><option value="7">7 Days — ৳50</option><option value="30">30 Days — ৳150</option><option value="90">90 Days — ৳350</option></select></div>
+<div class="field"><label>Payment Method</label><select id="payMethod"><option>bKash</option><option>Nagad</option></select></div>
+<div class="field"><label>আপনার Sender Number</label><input id="paySender" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"></div>
+<div class="field"><label>Transaction ID</label><input id="payTrx" placeholder="TRX ID"></div>
+<button class="btn success" onclick="submitPayment()">Submit Payment</button>
+</div></div>
+
+<!-- RESIZE -->
+<div class="modal" id="resizeModal"><div class="modalbox">
+<div class="modalhead"><h2>📐 Image Resize</h2><button class="close" onclick="closeModal('resizeModal')">×</button></div>
+<input id="resizeFile" type="file" accept="image/*" class="field">
+<div class="row">
+<div class="field"><label>Width</label><input id="resizeW" type="number" placeholder="যেমন 800"></div>
+<div class="field"><label>Height</label><input id="resizeH" type="number" placeholder="যেমন 600"></div>
+</div>
+<button class="btn primary" onclick="resizeImage()">Resize & Download</button>
+</div></div>
+
+<!-- PASSPORT -->
+<div class="modal" id="passportModal"><div class="modalbox">
+<div class="modalhead"><h2>🪪 Passport Photo</h2><button class="close" onclick="closeModal('passportModal')">×</button></div>
+<input id="passportFile" type="file" accept="image/*" class="field">
+<p class="small">413 × 531 px output. ছবির মাঝখান থেকে crop হবে।</p>
+<button class="btn primary" onclick="makePassport()">Create & Download</button>
+</div></div>
+
+<!-- CV -->
+<div class="modal" id="cvModal"><div class="modalbox">
+<div class="modalhead"><h2>📋 CV Maker</h2><button class="close" onclick="closeModal('cvModal')">×</button></div>
+<div class="row">
+<div class="field"><label>নাম</label><input id="cvName"></div>
+<div class="field"><label>Phone</label><input id="cvPhone"></div>
+<div class="field"><label>Email</label><input id="cvEmail"></div>
+<div class="field"><label>ঠিকানা</label><input id="cvAddress"></div>
+</div>
+<div class="field"><label>Career Objective</label><textarea id="cvObjective" rows="3"></textarea></div>
+<div class="field"><label>Education</label><textarea id="cvEducation" rows="4"></textarea></div>
+<div class="field"><label>Experience</label><textarea id="cvExperience" rows="4"></textarea></div>
+<div class="field"><label>Skills</label><textarea id="cvSkills" rows="3"></textarea></div>
+<button class="btn primary" onclick="generateCV()">Preview / Print CV</button>
+</div></div>
+
+<!-- ADMIN -->
+<div class="modal" id="adminModal"><div class="modalbox">
+<div class="modalhead"><h2>🔧 Admin Dashboard</h2><button class="close" onclick="closeModal('adminModal')">×</button></div>
+
+<div id="adminLoginBox">
+  <div class="field"><label>Admin Password</label><input id="adminPassword" type="password"></div>
+  <button class="btn dark" onclick="adminLogin()">Admin Login</button>
+</div>
+
+<div id="adminPanel" class="hide">
+  <div id="stats" class="stats"></div>
+
+  <h3>💳 Payment Requests</h3>
+  <div id="paymentsTable" class="tablewrap"></div>
+
+  <h3>👥 Users</h3>
+  <div class="row">
+    <div class="field"><label>User Email</label><input id="premiumEmail" placeholder="user@email.com"></div>
+    <div class="field"><label>Premium Days</label><input id="premiumDays" type="number" value="30"></div>
+  </div>
+  <button class="btn success" onclick="adminSetPremium()">Manual Premium</button>
+  <div id="usersTable" class="tablewrap"></div>
+</div>
+</div></div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbzok1FFr6Rq4Pt0SsDnASR2y2Y7eMRrW0v2sbPlNb6fAYOuRzMIXBnl53Fw97PG84oF/exec";
+
+let currentUser = JSON.parse(localStorage.getItem("dtbd_user") || "null");
+let adminPass = sessionStorage.getItem("dtbd_admin") || "";
+
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.textContent=msg; el.style.display="block";
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>el.style.display="none",3500);
+}
+
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function showModal(id){document.getElementById(id).classList.add("show")}
+function openAuth(){showModal("authModal")}
+function openUserDashboard(){renderUser();showModal("userModal")}
+function openResize(){showModal("resizeModal")}
+function openPassport(){showModal("passportModal")}
+function openCV(){showModal("cvModal")}
+function openAdmin(){showModal("adminModal");if(adminPass)loadAdmin()}
+
+function filterTools(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  document.querySelectorAll(".tool").forEach(x=>{
+    x.style.display=(x.dataset.name||"").toLowerCase().includes(q)?"":"none";
+  });
+}
+
+async function api(action,data={}){
+  const res=await fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action,...data})
+  });
+  return await res.json();
+}
+
+function renderUser(){
+  const box=document.getElementById("userInfo");
+  if(!currentUser){
+    box.innerHTML="<b>আপনি Login করেননি।</b><br>Login অথবা Registration করুন।";
+    return;
+  }
+  const premium=currentUser.premium;
+  box.innerHTML=
+    "<b>নাম:</b> "+esc(currentUser.name)+"<br>"+
+    "<b>Email:</b> "+esc(currentUser.email)+"<br>"+
+    "<b>Phone:</b> "+esc(currentUser.phone)+"<br>"+
+    "<b>Status:</b> "+(premium?"⭐ Premium":"Free")+"<br>"+
+    (premium?"<b>Premium শেষ:</b> "+formatDate(currentUser.premiumEnd):"");
+}
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function formatDate(v){
+  if(!v)return "";
+  const d=new Date(v); if(isNaN(d))return esc(v);
+  return d.toLocaleString("bn-BD");
+}
+
+async function register(){
+  try{
+    const r=await api("register",{
+      name:document.getElementById("regName").value.trim(),
+      phone:document.getElementById("regPhone").value.trim(),
+      email:document.getElementById("regEmail").value.trim(),
+      password:document.getElementById("regPassword").value
+    });
+    toast(r.message||"");
+    if(r.ok){
+      currentUser=r.user;
+      localStorage.setItem("dtbd_user",JSON.stringify(currentUser));
+      renderUser();
+      closeModal("authModal");
+      showModal("userModal");
+    }
+  }catch(e){toast("Server connection error")}
+}
+
+async function login(){
+  try{
+    const r=await api("login",{
+      email:document.getElementById("loginEmail").value.trim(),
+      password:document.getElementById("loginPassword").value
+    });
+    toast(r.message||"");
+    if(r.ok){
+      currentUser=r.user;
+      localStorage.setItem("dtbd_user",JSON.stringify(currentUser));
+      closeModal("authModal");
+      renderUser();
+      showModal("userModal");
+    }
+  }catch(e){toast("Server connection error")}
+}
+
+function logout(){
+  currentUser=null;
+  localStorage.removeItem("dtbd_user");
+  closeModal("userModal");
+  toast("Logout হয়েছে");
+}
+
+async function refreshUser(){
+  if(!currentUser)return;
+  try{
+    const r=await api("getUser",{email:currentUser.email});
+    if(r.ok){
+      currentUser=r.user;
+      localStorage.setItem("dtbd_user",JSON.stringify(currentUser));
+      renderUser();
+    }
+  }catch(e){}
+}
+
+async function openPayment(plan){
+  if(!currentUser){
+    toast("আগে Login/Register করুন");
+    openAuth();
+    return;
+  }
+  if(plan)document.getElementById("payPlan").value=plan;
+  try{
+    const r=await api("settings",{});
+    if(r.ok){
+      document.getElementById("paymentNumbers").innerHTML=
+        "<b>bKash:</b> "+esc(r.bkash)+"<br>"+
+        "<b>Nagad:</b> "+esc(r.nagad)+"<br>"+
+        "<span class='small'>Payment করার পর Sender Number ও TRX ID দিন।</span>";
+    }
+  }catch(e){
+    document.getElementById("paymentNumbers").textContent="Payment number পাওয়া যায়নি।";
+  }
+  showModal("paymentModal");
+}
+
+async function submitPayment(){
+  if(!currentUser){toast("Login করুন");return}
+  const plan=document.getElementById("payPlan").value;
+  try{
+    const r=await api("payment",{
+      email:currentUser.email,
+      name:currentUser.name,
+      phone:currentUser.phone,
+      plan:plan,
+      method:document.getElementById("payMethod").value,
+      sender:document.getElementById("paySender").value.trim(),
+      trx:document.getElementById("payTrx").value.trim()
+    });
+    toast(r.message||"");
+    if(r.ok)closeModal("paymentModal");
+  }catch(e){toast("Payment submit failed")}
+}
+
+async function adminLogin(){
+  const p=document.getElementById("adminPassword").value;
+  try{
+    const r=await api("adminLogin",{password:p});
+    toast(r.message||"");
+    if(r.ok){
+      adminPass=p;
+      sessionStorage.setItem("dtbd_admin",p);
+      document.getElementById("adminLoginBox").classList.add("hide");
+      document.getElementById("adminPanel").classList.remove("hide");
+      loadAdmin();
+    }
+  }catch(e){toast("Admin server connection error")}
+}
+
+async function loadAdmin(){
+  if(!adminPass)return;
+  document.getElementById("adminLoginBox").classList.add("hide");
+  document.getElementById("adminPanel").classList.remove("hide");
+  try{
+    const s=await api("stats",{password:adminPass});
+    if(!s.ok){adminPass="";sessionStorage.removeItem("dtbd_admin");return}
+    document.getElementById("stats").innerHTML=
+      stat("Total Users",s.totalUsers)+
+      stat("Premium Users",s.premiumUsers)+
+      stat("Pending",s.pendingPayments)+
+      stat("Approved",s.approvedPayments);
+
+    const p=await api("adminPayments",{password:adminPass});
+    renderPayments(p.payments||[]);
+
+    const u=await api("adminUsers",{password:adminPass});
+    renderUsers(u.users||[]);
+  }catch(e){toast("Admin data load failed")}
+}
+
+function stat(name,value){
+  return "<div class='stat'><span>"+name+"</span><b>"+esc(value)+"</b></div>";
+}
+
+function renderPayments(arr){
+  if(!arr.length){document.getElementById("paymentsTable").innerHTML="<p>কোনো payment request নেই।</p>";return}
+  let h="<table class='table'><tr><th>ID</th><th>User</th><th>Method</th><th>Plan</th><th>TRX</th><th>Status</th><th>Action</th></tr>";
+  arr.forEach(p=>{
+    h+="<tr>"+
+      "<td>"+esc(p.paymentID)+"</td>"+
+      "<td>"+esc(p.email)+"<br>"+esc(p.name)+"</td>"+
+      "<td>"+esc(p.method)+"</td>"+
+      "<td>"+esc(p.plan)+" দিন<br>৳"+esc(p.price)+"</td>"+
+      "<td>"+esc(p.trx)+"<br>"+esc(p.sender)+"</td>"+
+      "<td>"+esc(p.status)+"</td>"+
+      "<td>"+(p.status==="Pending"
+        ?"<button class='btn success' onclick=\"approvePay('"+jsq(p.paymentID)+"')\">Approve</button> <button class='btn danger' onclick=\"rejectPay('"+jsq(p.paymentID)+"')\">Reject</button>"
+        :"—")+
+      "</td></tr>";
+  });
+  h+="</table>";
+  document.getElementById("paymentsTable").innerHTML=h;
+}
+
+function jsq(v){return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+
+async function approvePay(id){
+  if(!confirm("এই payment approve করবেন?"))return;
+  const r=await api("approvePayment",{password:adminPass,paymentID:id});
+  toast(r.message||"");
+  if(r.ok)loadAdmin();
+}
+async function rejectPay(id){
+  if(!confirm("এই payment reject করবেন?"))return;
+  const r=await api("rejectPayment",{password:adminPass,paymentID:id});
+  toast(r.message||"");
+  if(r.ok)loadAdmin();
+}
+
+function renderUsers(arr){
+  if(!arr.length){document.getElementById("usersTable").innerHTML="<p>User নেই।</p>";return}
+  let h="<table class='table'><tr><th>Name</th><th>Email</th><th>Phone</th><th>Premium</th><th>End</th><th>Action</th></tr>";
+  arr.forEach(u=>{
+    h+="<tr>"+
+      "<td>"+esc(u.name)+"</td>"+
+      "<td>"+esc(u.email)+"</td>"+
+      "<td>"+esc(u.phone)+"</td>"+
+      "<td>"+(u.premium?"⭐ Yes":"No")+"</td>"+
+      "<td>"+formatDate(u.premiumEnd)+"</td>"+
+      "<td><button class='btn danger' onclick=\"deleteUsr('"+jsq(u.email)+"')\">Delete</button></td>"+
+      "</tr>";
+  });
+  h+="</table>";
+  document.getElementById("usersTable").innerHTML=h;
+}
+
+async function adminSetPremium(){
+  const email=document.getElementById("premiumEmail").value.trim();
+  const days=document.getElementById("premiumDays").value;
+  if(!email){toast("Email দিন");return}
+  const r=await api("setPremium",{password:adminPass,email,days});
+  toast(r.message||"");
+  if(r.ok)loadAdmin();
+}
+
+async function deleteUsr(email){
+  if(!confirm(email+" delete করবেন?"))return;
+  const r=await api("deleteUser",{password:adminPass,email});
+  toast(r.message||"");
+  if(r.ok)loadAdmin();
+}
+
+function downloadBlob(blob,name){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+function readDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file);
+  });
+}
+
+function loadImage(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+async function imageToPdf(){
+  const input=document.createElement("input");
+  input.type="file";input.accept="image/*";input.multiple=true;
+  input.onchange=async()=>{
+    if(!input.files.length)return;
+    try{
+      const {jsPDF}=window.jspdf;
+      let pdf=null;
+      for(const file of input.files){
+        const img=await loadImage(file);
+        const w=img.naturalWidth,h=img.naturalHeight;
+        const landscape=w>h;
+        const doc=pdf || new jsPDF({
+          orientation:landscape?"landscape":"portrait",
+          unit:"px",
+          format:[w,h]
+        });
+        if(pdf)doc.addPage([w,h],landscape?"landscape":"portrait");
+        const data=await readDataURL(file);
+        doc.addImage(data,"JPEG",0,0,w,h);
+        pdf=doc;
+      }
+      pdf.save("images.pdf");
+      toast("Image → PDF তৈরি হয়েছে");
+    }catch(e){toast("Image → PDF failed")}
+  };
+  input.click();
+}
+
+async function pdfToWord(){
+  const input=document.createElement("input");
+  input.type="file";input.accept="application/pdf";
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    try{
+      toast("PDF text পড়া হচ্ছে...");
+      const pdfjs=await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs");
+      pdfjs.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+      const buffer=await file.arrayBuffer();
+      const pdf=await pdfjs.getDocument({data:buffer}).promise;
+      const paragraphs=[];
+      for(let i=1;i<=pdf.numPages;i++){
+        const page=await pdf.getPage(i);
+        const content=await page.getTextContent();
+        const text=content.items.map(x=>x.str).join(" ");
+        paragraphs.push("Page "+i+"\\n"+text);
+      }
+      const doc=new docx.Document({
+        sections:[{
+          children:paragraphs.map(t=>new docx.Paragraph({text:t}))
+        }]
+      });
+      const blob=await docx.Packer.toBlob(doc);
+      downloadBlob(blob,"converted.docx");
+      toast("PDF → Word সম্পন্ন");
+    }catch(e){
+      toast("PDF → Word failed। Scanned PDF হলে OCR প্রয়োজন হতে পারে।");
+    }
+  };
+  input.click();
+}
+
+async function wordToPdf(){
+  const input=document.createElement("input");
+  input.type="file";input.accept=".docx";
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    try{
+      toast("Word পড়া হচ্ছে...");
+      const ab=await file.arrayBuffer();
+      const result=await mammoth.extractRawText({arrayBuffer:ab});
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:"pt",format:"a4"});
+      const margin=42;
+      const width=pdf.internal.pageSize.getWidth()-margin*2;
+      const lines=pdf.splitTextToSize(result.value||"",width);
+      let y=50;
+      for(const line of lines){
+        if(y>pdf.internal.pageSize.getHeight()-45){pdf.addPage();y=50}
+        pdf.text(line,margin,y);
+        y+=15;
+      }
+      pdf.save("converted.pdf");
+      toast("Word → PDF সম্পন্ন");
+    }catch(e){toast("শুধু DOCX supported।")}
+  };
+  input.click();
+}
+
+async function pdfMerge(){
+  const input=document.createElement("input");
+  input.type="file";input.accept="application/pdf";input.multiple=true;
+  input.onchange=async()=>{
+    if(input.files.length<2){toast("কমপক্ষে ২টি PDF দিন");return}
+    try{
+      const {PDFDocument}=PDFLib;
+      const merged=await PDFDocument.create();
+      for(const file of input.files){
+        const src=await PDFDocument.load(await file.arrayBuffer());
+        const pages=await merged.copyPages(src,src.getPageIndices());
+        pages.forEach(p=>merged.addPage(p));
+      }
+      const bytes=await merged.save();
+      downloadBlob(new Blob([bytes],{type:"application/pdf"}),"merged.pdf");
+      toast("PDF Merge সম্পন্ন");
+    }catch(e){toast("PDF Merge failed")}
+  };
+  input.click();
+}
+
+async function pdfSplit(){
+  const input=document.createElement("input");
+  input.type="file";input.accept="application/pdf";
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    const pages=prompt("যে pageগুলো চান লিখুন। যেমন: 1,3,5");
+    if(!pages)return;
+    try{
+      const {PDFDocument}=PDFLib;
+      const src=await PDFDocument.load(await file.arrayBuffer());
+      const out=await PDFDocument.create();
+      const nums=pages.split(",").map(x=>parseInt(x.trim(),10)-1).filter(x=>x>=0&&x<src.getPageCount());
+      if(!nums.length){toast("সঠিক page number দিন");return}
+      const copied=await out.copyPages(src,nums);
+      copied.forEach(p=>out.addPage(p));
+      const bytes=await out.save();
+      downloadBlob(new Blob([bytes],{type:"application/pdf"}),"split.pdf");
+      toast("PDF Split সম্পন্ন");
+    }catch(e){toast("PDF Split failed")}
+  };
+  input.click();
+}
+
+async function backgroundRemove(){
+  const input=document.createElement("input");
+  input.type="file";input.accept="image/*";
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    try{
+      toast("AI Background Remove শুরু হয়েছে...");
+      const mod=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm");
+      const blob=await mod.removeBackground(file);
+      downloadBlob(blob,"background-removed.png");
+      toast("Background Remove সম্পন্ন");
+    }catch(e){
+      toast("AI model load/remove failed। Internet connection ঠিক আছে কিনা দেখুন।");
+    }
+  };
+  input.click();
+}
+
+function resizeImage(){
+  const file=document.getElementById("resizeFile").files[0];
+  if(!file){toast("ছবি নির্বাচন করুন");return}
+  const W=parseInt(document.getElementById("resizeW").value)||0;
+  const H=parseInt(document.getElementById("resizeH").value)||0;
+  if(!W&&!H){toast("Width অথবা Height দিন");return}
+
+  loadImage(file).then(img=>{
+    let w=W,h=H;
+    if(W&&!H){w=W;h=Math.round(img.height*(W/img.width))}
+    if(H&&!W){h=H;w=Math.round(img.width*(H/img.height))}
+    const c=document.createElement("canvas");c.width=w;c.height=h;
+    c.getContext("2d").drawImage(img,0,0,w,h);
+    c.toBlob(blob=>{
+      downloadBlob(blob,"resized.png");
+      toast("Resize সম্পন্ন");
+    },"image/png");
+  }).catch(()=>toast("Resize failed"));
+}
+
+function openPassport(){showModal("passportModal")}
+function makePassport(){
+  const file=document.getElementById("passportFile").files[0];
+  if(!file){toast("ছবি নির্বাচন করুন");return}
+  loadImage(file).then(img=>{
+    const W=413,H=531;
+    const c=document.createElement("canvas");c.width=W;c.height=H;
+    const ctx=c.getContext("2d");
+    const scale=Math.max(W/img.width,H/img.height);
+    const nw=img.width*scale,nh=img.height*scale;
+    ctx.drawImage(img,(W-nw)/2,(H-nh)/2,nw,nh);
+    c.toBlob(blob=>{
+      downloadBlob(blob,"passport-photo.png");
+      toast("Passport Photo তৈরি হয়েছে");
+    },"image/jpeg",.95);
+  });
+}
+
+function generateCV(){
+  const name=esc(document.getElementById("cvName").value);
+  const phone=esc(document.getElementById("cvPhone").value);
+  const email=esc(document.getElementById("cvEmail").value);
+  const address=esc(document.getElementById("cvAddress").value);
+  const objective=esc(document.getElementById("cvObjective").value);
+  const education=esc(document.getElementById("cvEducation").value).replace(/\n/g,"<br>");
+  const experience=esc(document.getElementById("cvExperience").value).replace(/\n/g,"<br>");
+  const skills=esc(document.getElementById("cvSkills").value).replace(/\n/g,"<br>");
+
+  const w=window.open("","_blank");
+  w.document.write(`<!doctype html><html><head><title>CV</title>
+  <style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;line-height:1.6}h1{text-align:center;margin-bottom:5px}h2{border-bottom:1px solid #333;padding-bottom:4px}.contact{text-align:center;color:#444}</style>
+  </head><body><h1>${name}</h1><div class="contact">${phone} | ${email}<br>${address}</div>
+  <h2>Career Objective</h2><p>${objective}</p>
+  <h2>Education</h2><p>${education}</p>
+  <h2>Experience</h2><p>${experience}</p>
+  <h2>Skills</h2><p>${skills}</p>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+window.addEventListener("load",()=>{
+  if(currentUser)refreshUser();
+});
+</script>
+</body>
+</html>
